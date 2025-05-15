@@ -4,7 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:camerafile/ui/camera_page_bloc.dart';
 import 'package:camerafile/storage_helper_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc//flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -32,4 +32,13 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     Emitter<CameraState> emit,
   ) async {
     _cameras = await availableCameras();
+
+    await _setupController(0, emit);
+  }
+
+  Future<void> _onSwitch(SwitchCamera event, Emitter<CameraState> emit) async {
+    if (state is! CameraReady) return;
+    final s = state as CameraReady;
+    final next = (s.selectedIndex + 1) % _cameras.length;
+    await _setupController(emit, next, previous: s);
   }
