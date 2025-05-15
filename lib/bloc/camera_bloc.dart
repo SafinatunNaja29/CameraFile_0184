@@ -168,3 +168,25 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     }
     return super.close();
   }
+
+  Future<void> _onRequestPermissions (
+    RequestPermissions event,
+    Emitter<CameraState> emit,
+  ) async {
+    final statuses = await [
+      Permission.camera,
+      Permission.storage,
+      Permission.manageExternalStorage,
+    ].request();
+
+    final denied = statuses.entries.where((e) => !e.value.isGranted).toList();
+
+    if (denied.isNotEmpty) {
+      if (state is CameraReady) {
+        emit((state as CameraReady).copyWith(
+          snackbarMessage: 'Izin kamera atau penyimpanan ditolak.',
+        ));
+      }
+    }
+  }
+}
