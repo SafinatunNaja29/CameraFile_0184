@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
+import 'package:camerafile/storage_helper.dart';
+import 'package:camerafile/ui/camera_page.dart';
 import 'package:camerafile/ui/camera_page_bloc.dart';
 import 'package:camerafile/storage_helper_bloc.dart';
 import 'package:flutter/material.dart';
@@ -87,30 +89,34 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     ));
   }
 
- Future<void> _onOpenCamera(
+  Future<void> _onOpenCamera(
     OpenCameraAndCapture event,
     Emitter<CameraState> emit,
   ) async {
+    print('[CameraBloc] OpenCameraAndCapture triggered');
+
     if (state is! CameraReady) {
-      print('[CameraBloc] state is not ready, abort!');
+      print('[CameraBloc] state is not ready, abort');
       return;
     }
 
     final file = await Navigator.push<File?>(
       event.context,
       MaterialPageRoute(
-        builder:
-            (_) => BlocProvider.value(value: this, child: const CameraPage()),
+        builder: (_) => BlocProvider.value(
+          value: this,
+          child: const CameraPage(),
+        ),
       ),
     );
 
     if (file != null) {
       final saved = await StorageHelper.saveImage(file, 'camera');
-      emit(
-        (state as CameraReady).copyWith(
-          imageFile: saved,
-          snackbarMessage: 'Disimpan: ${saved.path}',
-        ),
-      );
+      emit((state as CameraReady).copyWith(
+        imageFile: saved,
+        snackbarMessage: 'Disimpan: ${saved.path}',
+      ));
     }
   }
+
+  
