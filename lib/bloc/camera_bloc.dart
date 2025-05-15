@@ -1,9 +1,7 @@
 import 'dart:io';
-import 'dart:js_interop_unsafe';
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:camerafile/storage_helper.dart';
-import 'package:camerafile/ui/camera_page.dart';
 import 'package:camerafile/ui/camera_page_bloc.dart';
 import 'package:camerafile/storage_helper_bloc.dart';
 import 'package:flutter/material.dart';
@@ -39,11 +37,11 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     await _setupController(0, emit);
   }
 
-  Future<void> _onSwitch(SwitchCamera event, Emitter<CameraState> emit) async {
+  Future<void> _onSwitchCamera(SwitchCamera event, Emitter<CameraState> emit) async {
     if (state is! CameraReady) return;
     final s = state as CameraReady;
     final next = (s.selectedIndex + 1) % _cameras.length;
-    await _setupController(emit, next, previous: s);
+    await _setupController(next, emit, previous: s);
   }
 
   Future<void> _onToggleFlash(
@@ -121,7 +119,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   }
 
   Future<void> _onDeleteImage(
-      DeleteImage event, Emitter<CameraState>) async {
+      DeleteImage event, Emitter<CameraState> emit) async {
     if (state is! CameraReady) return;
     final s = state as CameraReady;
     await s.imageFile?.delete();

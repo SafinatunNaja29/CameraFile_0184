@@ -2,8 +2,8 @@ import 'package:camera/camera.dart';
 import 'package:camerafile/bloc/camera_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'bloc/camera_bloc.dart';
-import 'bloc/camera_state.dart';
+import 'package:camerafile/bloc/camera_bloc.dart';
+import 'package:camerafile/bloc/camera_state.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -50,7 +50,7 @@ class _CameraPageState extends State<CameraPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: BlockBuilder<CameraBloc, CameraState>(
+      body: BlocBuilder<CameraBloc, CameraState>(
         builder: (context, state) {
           if (state is! CameraReady) {
             return const Center(child: CircularProgressIndicator());
@@ -77,7 +77,7 @@ class _CameraPageState extends State<CameraPage> {
                       children: [
                         _circleButton(Icons.flip_camera_android, () {
                           context.read<CameraBloc>().add(SwitchCamera());
-                        });
+                        }),
                         const SizedBox(height: 12),
                         _circleButton(_flashIcon(state.flashMode), () {
                           context.read<CameraBloc>().add(ToggleFlash());
