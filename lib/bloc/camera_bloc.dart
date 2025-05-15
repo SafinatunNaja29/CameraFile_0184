@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:js_interop_unsafe';
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:camerafile/storage_helper.dart';
@@ -119,4 +120,16 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     }
   }
 
-  
+Future<void> _onDeleteImage(
+    DeleteImage event, Emitter<CameraState>) async {
+  if (state is! CameraReady) return;
+  final s = state as CameraReady;
+  await s.imageFile?.delete();
+  emit(CameraReady(
+    controller: s.controller,
+    selectedIndex: s.selectedIndex,
+    flashMode: s.flashMode,
+    imageFile: null,
+    snackbarMessage: 'Gambar dihapus',
+  ));  
+}
